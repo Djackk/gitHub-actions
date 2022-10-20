@@ -22,7 +22,7 @@ on:
 
 
 jobs:
-  Manual Release:
+  Manual-Release:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
