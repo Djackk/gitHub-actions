@@ -1,5 +1,7 @@
 name: 'Build Terraform'
 description: 'Generates a tag for the repo'
+on:
+  workflow_dispatch:
 inputs:
   branch:  # id of input
     description: 'Name of the master branch'
