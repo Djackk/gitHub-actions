@@ -1,24 +1,15 @@
 name: Release (Manual)
 
 on:
-  branches:
-    - master
   workflow_dispatch:
     inputs:
       Environment:
-        description: 'Env for release'
-        default: 'dev'
+        description: 'Environment'
+        default: 'Prod'
         required: true
       Region:
-        description: 'Region for release'
+        description: 'Region'
         default: 'us-east-1'
-        required: true
-      Tag:
-        description: 'Tags to select'
-        type: choice
-        options:
-        - 1.0.0
-        - 1.0.1
         required: true
 
 
