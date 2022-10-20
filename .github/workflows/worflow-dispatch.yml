@@ -15,7 +15,7 @@ on:
         description: 'Tags to select'
         type: choice
         options:
-          - ${{ git fetch --tags origin }}
+          git fetch --tags origin
         required: false
 
 
