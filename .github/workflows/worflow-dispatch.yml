@@ -20,8 +20,7 @@ on:
         default: '1.0.0'
         type: choice
         options:
-        - '1.0.1'
-        - '1.0.2'
+        - git fetch --tags origin
         required: true
 
 
