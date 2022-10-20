@@ -12,10 +12,10 @@ on:
         default: 'us-east-1'
         required: true
       Tag:
+        run: git fetch --tags origin
         description: 'Tags to select'
         type: choice
         options:
-        run: git fetch --tags origin
         required: false
 
 
