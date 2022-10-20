@@ -1,20 +1,19 @@
 name: Release (Manual)
 
-on:
-  workflow_dispatch:
-    inputs:
-      branch: # id of input
-        description: 'Name of the master branch'
-        required: false
-        default: 'master'
-      Environment:
-        description: 'Environment'
-        default: 'dev'
-        required: true
-      Region:
-        description: 'Region'
-        default: 'us-east-1'
-        required: true
+description: 'Generates a tag for the repo'
+inputs:
+  branch:  # id of input
+    description: 'Name of the master branch'
+    required: false
+    default: 'master'
+  terraform-version:
+    description: 'Terraform version'
+    required: false
+    default: 'v1'
+  env:
+    description: 'Name of the environment'
+    required: false
+    default: 'prod'
 
 jobs:
   Manual-Release:
