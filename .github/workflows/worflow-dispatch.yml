@@ -16,7 +16,7 @@ on:
         type: choice
         options:
         run: git fetch --tags origin
-        required: true
+        required: false
 
 
 jobs:
