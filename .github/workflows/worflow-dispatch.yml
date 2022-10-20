@@ -1,6 +1,14 @@
 name: Release (Manual)
 
 on:
+  workflow_call:
+    inputs:
+      username:
+        description: 'A username passed from the caller workflow'
+        default: 'john-doe'
+        required: false
+        type: string
+
   workflow_dispatch:
     inputs:
       branch: # id of input
