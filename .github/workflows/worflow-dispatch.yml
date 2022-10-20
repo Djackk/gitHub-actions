@@ -19,6 +19,7 @@ on:
         description: 'Tags to select'
         type: choice
         options:
+        run:
         - git fetch --tags origin
         required: true
 
