@@ -2,7 +2,6 @@ name: Release (Manual)
 
 on:
   workflow_dispatch:
-    run: git fetch --tags origin
     inputs:
       Environment:
         description: 'Environment'
@@ -16,6 +15,7 @@ on:
         description: 'Tags to select'
         type: choice
         options:
+          - ${{ git fetch --tags origin }}
         required: false
 
 
