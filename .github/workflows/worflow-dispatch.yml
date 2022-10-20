@@ -15,12 +15,6 @@ on:
         description: 'Region'
         default: 'us-east-1'
         required: true
-      Tag:
-        description: 'Tags to select'
-        type: choice
-        options:
-        required: false
-
 
 jobs:
   Manual-Release:
