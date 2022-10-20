@@ -19,8 +19,8 @@ on:
         description: 'Tags to select'
         type: choice
         options:
-        run:
-        - git fetch --tags origin
+        - 1.0.0
+        - 1.0.1
         required: true
 
 
