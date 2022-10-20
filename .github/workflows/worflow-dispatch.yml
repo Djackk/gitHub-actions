@@ -2,6 +2,7 @@ name: Release (Manual)
 
 on:
   workflow_dispatch:
+    run: git fetch --tags origin
     inputs:
       Environment:
         description: 'Environment'
@@ -12,7 +13,6 @@ on:
         default: 'us-east-1'
         required: true
       Tag:
-        run: git fetch --tags origin
         description: 'Tags to select'
         type: choice
         options:
