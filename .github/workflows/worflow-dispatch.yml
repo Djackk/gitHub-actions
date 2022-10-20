@@ -15,6 +15,11 @@ on:
         description: 'Region for release'
         default: 'us-east-1'
         required: true
+      Tag:
+        description: 'Tags to select'
+        default: '1.0.0,1.0.1,1.0.2'
+        required: true
+
 
 jobs:
   Manual-Release:
