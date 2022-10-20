@@ -17,7 +17,6 @@ on:
         required: true
       Tag:
         description: 'Tags to select'
-        default: '1.0.0'
         type: choice
         options:
         - git fetch --tags origin
