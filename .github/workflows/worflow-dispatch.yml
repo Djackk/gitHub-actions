@@ -3,6 +3,10 @@ name: Release (Manual)
 on:
   workflow_dispatch:
     inputs:
+      branch: # id of input
+        description: 'Name of the master branch'
+        required: false
+        default: 'master'
       Environment:
         description: 'Environment'
         default: 'dev'
@@ -15,7 +19,6 @@ on:
         description: 'Tags to select'
         type: choice
         options:
-          git fetch --tags origin
         required: false
 
 
