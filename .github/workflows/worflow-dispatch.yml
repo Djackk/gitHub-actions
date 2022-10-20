@@ -5,11 +5,17 @@ on:
     inputs:
       Environment:
         description: 'Environment'
-        default: 'Prod'
+        default: 'dev'
         required: true
       Region:
         description: 'Region'
         default: 'us-east-1'
+        required: true
+      Tag:
+        description: 'Tags to select'
+        type: choice
+        options:
+          run: git fetch --tags origin
         required: true
 
 
