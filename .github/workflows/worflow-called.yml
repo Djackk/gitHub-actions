@@ -6,7 +6,7 @@ on:
       branch: # id of input
         description: 'Name of the master branch'
         required: false
-        default: 'master'
+        default: ''
         type: string
       Environment:
         description: 'Environment'
@@ -15,39 +15,15 @@ on:
         type: string
       Region:
         description: 'Region'
-        default: 'us-east-1'
+        default: ''
         required: true
         type: string
 
-#  workflow_dispatch:
-#    inputs:
-#      branch: # id of input
-#        description: 'Name of the master branch'
-#        required: false
-#        default: 'master'
-#      Environment:
-#        description: 'Environment'
-#        default: 'dev'
-#        required: true
-#      Region:
-#        description: 'Region'
-#        default: 'us-east-1'
-#        required: true
 
 jobs:
   Manual-Release:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.event.inputs.branch }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
       - name: Environment Check
         run: |
           echo "${{ github.event.inputs.Environment }}"

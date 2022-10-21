@@ -7,7 +7,7 @@ on:
         description: 'Region'
         default: 'us-east-1'
         required: true
-        type: Region
+        type: String
 env:
   Environment: stage
 
@@ -29,5 +29,5 @@ jobs:
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment: ${{ needs.print.outputs.env_var}}
-      branch: echo ${{ github.ref }}
+      branch: ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}
