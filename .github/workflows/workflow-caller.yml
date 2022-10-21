@@ -7,14 +7,17 @@ on:
         description: 'Name of the master branch'
         required: false
         default: 'master'
+        type: branch
       Environment:
         description: 'Environment'
         default: 'dev'
         required: true
+        type: Environment
       Region:
         description: 'Region'
         default: 'us-east-1'
         required: true
+        type: Region
 
 jobs:
   call-workflow-passing-data:
