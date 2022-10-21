@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deployment Check Failed
-        if: github.ref_type == 'tag'
+        if: github.ref_type != 'tag'
         run: |
           echo "Please select a tag for the deployment"
           exit 1
