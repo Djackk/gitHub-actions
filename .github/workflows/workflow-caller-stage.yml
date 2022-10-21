@@ -11,8 +11,6 @@ on:
 
 jobs:
   call-workflow-passing-data:
-    needs:
-      - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment : "Prod"
