@@ -10,7 +10,7 @@ on:
         type: string
       Environment:
         description: 'Environment'
-        default: 'dev'
+        default: ''
         required: true
         type: string
       Region:
