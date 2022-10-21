@@ -10,24 +10,19 @@ on:
         type: string
 
 jobs:
-  Manual-Release:
+  Deployment:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🔎 The name of your branch is ${{ github.event.inputs.branch }} and your repository is ${{ github.repository }}."
       - name: Environment
         run: |
           echo "The code is being deployed in Prod"
+
       - name: Region Check
         run: |
           echo "${{ github.event.inputs.Region }}"
-      - name: Branch Check
-        run: |
-          echo "${{ github.ref }}"
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Deployment Status
         run: |
           echo "Code will be deployed from ${{ github.ref }}"
+          exit 0
 

@@ -10,22 +10,17 @@ on:
         type: string
 
 jobs:
-  Manual-Release:
+  Deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Environment
         run: |
           echo "The code is being deployed in Prod"
+
       - name: Region Check
         run: |
           echo "${{ github.event.inputs.Region }}"
-      - name: Branch Check
-        run: |
-          echo "${{ github.ref_type }}"
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Deployment Check Failed
         if: github.ref_type != 'tag'
         run: |
@@ -36,4 +31,6 @@ jobs:
         run: |
           echo "Code will be deployed from the tag ${{ github.ref }}"
           exit 0
+          
+      
 
