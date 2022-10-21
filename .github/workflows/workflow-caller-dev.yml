@@ -1,4 +1,4 @@
-name: Call a reusable workflow for Prod
+name: Call a reusable workflow for Dev
 
 on:
   workflow_dispatch:
