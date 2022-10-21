@@ -3,14 +3,6 @@ name: Release (Manual)
 on:
   workflow_call:
     inputs:
-      username:
-        description: 'A username passed from the caller workflow'
-        default: 'john-doe'
-        required: false
-        type: string
-
-  workflow_dispatch:
-    inputs:
       branch: # id of input
         description: 'Name of the master branch'
         required: false
@@ -23,6 +15,21 @@ on:
         description: 'Region'
         default: 'us-east-1'
         required: true
+
+#  workflow_dispatch:
+#    inputs:
+#      branch: # id of input
+#        description: 'Name of the master branch'
+#        required: false
+#        default: 'master'
+#      Environment:
+#        description: 'Environment'
+#        default: 'dev'
+#        required: true
+#      Region:
+#        description: 'Region'
+#        default: 'us-east-1'
+#        required: true
 
 jobs:
   Manual-Release:
