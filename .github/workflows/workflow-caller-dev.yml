@@ -1,0 +1,23 @@
+name: Call a reusable workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch: # id of input
+        description: 'Name of the master branch'
+        required: false
+        default: 'master'
+        type: branch
+      Region:
+        description: 'Region'
+        default: 'us-east-1'
+        required: true
+        type: Region
+
+jobs:
+  call-workflow-passing-data:
+    uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
+    with:
+      Environment: 'dev'
+      branch: ${{ github.event.inputs.Environment }}
+      Region: ${{ github.event.inputs.Region }}
