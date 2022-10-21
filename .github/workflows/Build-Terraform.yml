@@ -27,9 +27,9 @@ jobs:
     runs:
       using: "composite"
       steps:
-        - run: echo Executing against ${{ inputs.branch }} branch.
+        - name: Check Branch
+          run: echo Executing against ${{ inputs.branch }} branch.
           shell: bash
-
         - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
           shell: bash
 
