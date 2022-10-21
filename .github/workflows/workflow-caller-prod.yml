@@ -28,6 +28,8 @@ jobs:
           echo "Code will be deployed from the tag ${{ github.ref }}"
 
   call-workflow-passing-data:
+    needs:
+      - Deployment
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment : "Prod"
