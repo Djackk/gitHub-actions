@@ -56,5 +56,5 @@ jobs:
           echo "${{ github.event.inputs.Region }}"
       - name: Branch Check
         run: |
-          echo "${{ github.event.inputs.Branch }}"
+          echo "${{ github.event.inputs.branch }}"
       - run: echo "🍏 This job's status is ${{ job.status }}."

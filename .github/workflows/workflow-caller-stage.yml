@@ -8,11 +8,22 @@ on:
         default: 'us-east-1'
         required: true
         type: Region
+env:
+  Environment: stage
 
 jobs:
+  runs-on: ubuntu-latest
+  outputs:
+    env_var: ${{ steps.step1.outputs.env_var }}
+    steps:
+      - name: Print inputs passed to the reusable workflow
+        id: step1
+        run: |
+          echo "Environment from caller : $Environment"
+          echo "::set-output name=env_var::$Environment"
   call-workflow-passing-data:
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment: echo "stage"
+      Environment: ${{ needs.print.outputs.env_var}}
       branch: echo ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}
