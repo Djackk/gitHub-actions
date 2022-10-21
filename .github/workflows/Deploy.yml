@@ -26,7 +26,15 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/tags/*'
     steps:
-      - name: Not deployable
-        run: exit 1
+      - name: Deployment Check Failed
+        if: github.ref != 'refs/tags/*'
+        run: |
+          echo "Please select a tag for the deployment"
+          exit 1
+      - name: Deployment Check Passed
+        if: github.ref == 'refs/tags/*'
+        run: |
+          echo "Code will be deployed from the tag ${{ github.ref }}"
+          exit 0
+
