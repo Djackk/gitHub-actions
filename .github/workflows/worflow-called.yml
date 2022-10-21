@@ -48,7 +48,13 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-      - name: Version Check
+      - name: Environment Check
         run: |
-          echo "${{ github.event.inputs.version }}"
+          echo "${{ github.event.inputs.Environment }}"
+      - name: Region Check
+        run: |
+          echo "${{ github.event.inputs.Region }}"
+      - name: Branch Check
+        run: |
+          echo "${{ github.event.inputs.Branch }}"
       - run: echo "🍏 This job's status is ${{ job.status }}."
