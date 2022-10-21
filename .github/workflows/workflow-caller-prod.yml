@@ -10,7 +10,7 @@ on:
         type: Region
 
 jobs:
-  Deployment:
+  Deployment Status:
     runs-on: ubuntu-latest
     steps:
       - name: Region Check

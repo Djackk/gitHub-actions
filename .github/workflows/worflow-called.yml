@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Environment Check
         run: |
-          echo "${{ inputs.Environment }}"
+          echo "The code will be deployed to : ${{ inputs.Environment }} Environment"
       - name: Region Check
         run: |
           echo "${{ github.event.inputs.Region }}"
