@@ -28,8 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deployment from tag
-        if: github.ref == 'refs/tags/*'
         run: |
           echo "Code will be deployed from ${{ github.ref }}"
-          exit 0
 
