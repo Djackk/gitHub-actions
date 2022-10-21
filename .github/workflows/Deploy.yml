@@ -28,12 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deployment Check Failed
-        if: github.ref != 'refs/tags/*'
+        if: !github.ref_type == 'tag'
         run: |
           echo "Please select a tag for the deployment"
           exit 1
       - name: Deployment Check Passed
-        if: github.ref == 'refs/tags/*'
+        if: github.ref_type == 'tag'
         run: |
           echo "Code will be deployed from the tag ${{ github.ref }}"
           exit 0
