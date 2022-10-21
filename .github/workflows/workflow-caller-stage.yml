@@ -9,7 +9,7 @@ on:
         required: true
         type: Region
 env:
-  Environment: stage
+  Env: 'stage'
 
 jobs:
   print:
@@ -20,15 +20,14 @@ jobs:
       - name: Print inputs passed to the reusable workflow
         id: step1
         run: |
-          echo "Environment from caller : $Environment"
-          echo "env_var=$Environment" >> $GITHUB_OUTPUT
-          echo "local env var: ${{GITHUB_OUTPUT}}  "
+          echo "Environment from caller : $Env"
+          echo "env_var=$Env" >> $GITHUB_OUTPUT
 
   call-workflow-passing-data:
     needs:
       - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment : echo "${{ needs.print.outputs.env_var}}"
-      branch: echo ${{ github.ref }}
+      Environment : ${{ needs.print.outputs.env_var}}
+      branch: "Test"
       Region: ${{ github.event.inputs.Region }}
