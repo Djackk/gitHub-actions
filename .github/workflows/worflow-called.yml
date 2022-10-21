@@ -7,14 +7,17 @@ on:
         description: 'Name of the master branch'
         required: false
         default: 'master'
+        type: string
       Environment:
         description: 'Environment'
         default: 'dev'
         required: true
+        type: string
       Region:
         description: 'Region'
         default: 'us-east-1'
         required: true
+        type: string
 
 #  workflow_dispatch:
 #    inputs:
