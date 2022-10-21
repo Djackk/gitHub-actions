@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Environment from caller : $Environment"
           echo "env_var=$Environment" >> $GITHUB_OUTPUT
-          echo "local env var: ${{env_var}}  "
+          echo "local env var: ${{GITHUB_OUTPUT}}  "
 
   call-workflow-passing-data:
     needs:
