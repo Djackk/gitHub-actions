@@ -1,4 +1,4 @@
-name: Call a reusable workflow for stage
+name: Call a reusable workflow for Prod
 
 on:
   workflow_dispatch:
@@ -8,26 +8,13 @@ on:
         default: 'us-east-1'
         required: true
         type: Region
-env:
-  Env: 'stage'
 
 jobs:
-  print:
-    runs-on: ubuntu-latest
-    outputs:
-      env_var: ${{ steps.step1.outputs.env_var }}
-    steps:
-      - name: Print inputs passed to the reusable workflow
-        id: step1
-        run: |
-          echo "Environment from caller : $Env"
-          echo "env_var=$Env" >> $GITHUB_OUTPUT
-
   call-workflow-passing-data:
     needs:
       - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment : ${{ needs.print.outputs.env_var}}
-      branch: "Test"
+      Environment : "Prod"
+      branch: ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}

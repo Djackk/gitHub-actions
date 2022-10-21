@@ -1,4 +1,4 @@
-name: Call a reusable workflow for Dev
+name: Call a reusable workflow for Prod
 
 on:
   workflow_dispatch:
@@ -11,8 +11,10 @@ on:
 
 jobs:
   call-workflow-passing-data:
+    needs:
+      - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment: "dev"
+      Environment : "Dev"
       branch: ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}
