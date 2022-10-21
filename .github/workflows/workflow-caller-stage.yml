@@ -13,6 +13,6 @@ jobs:
   call-workflow-passing-data:
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment: "stage"
-      branch: ${{ github.ref }}
+      Environment: echo "stage"
+      branch: echo ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}
