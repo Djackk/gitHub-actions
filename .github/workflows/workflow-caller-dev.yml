@@ -1,4 +1,4 @@
-name: Call a reusable workflow for Dev
+name: Call a reusable workflow for Prod
 
 on:
   workflow_dispatch:
@@ -10,7 +10,20 @@ on:
         type: Region
 
 jobs:
+  Deployment Status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Region Check
+        run: |
+          echo "${{ github.event.inputs.Region }}"
+
+      - name: Deployment Check
+        run: |
+          echo "Code will be deployed from the tag ${{ github.ref }}"
+
   call-workflow-passing-data:
+    needs:
+      - Deployment
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment : "Dev"
