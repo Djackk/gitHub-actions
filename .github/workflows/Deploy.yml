@@ -1,0 +1,33 @@
+name: Release (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      Region:
+        description: 'Region'
+        default: 'us-east-1'
+        required: true
+        type: string
+
+jobs:
+  Manual-Release:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🔎 The name of your branch is ${{ github.event.inputs.branch }} and your repository is ${{ github.repository }}."
+      - name: Environment
+        run: |
+          echo "The code is being deployed in Prod"
+      - name: Region Check
+        run: |
+          echo "${{ github.event.inputs.Region }}"
+      - name: Branch Check
+        run: |
+          echo "${{ github.ref }}"
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+#  deploy:
+#    runs-on: ubuntu-latest
+#    needs: test
+#    if: github.ref == 'refs/heads/master'
+#    steps:
+#      - name: Deploy app
+#        run: exit 0
