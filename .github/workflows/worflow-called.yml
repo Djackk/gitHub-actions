@@ -26,11 +26,11 @@ jobs:
     steps:
       - name: Environment Check
         run: |
-          echo "${{ github.event.inputs.Environment }}"
+          echo "${{ inputs.Environment }}"
       - name: Region Check
         run: |
           echo "${{ github.event.inputs.Region }}"
       - name: Branch Check
         run: |
-          echo "${{ github.event.inputs.branch }}"
+          echo "${{ inputs.branch }}"
       - run: echo "🍏 This job's status is ${{ job.status }}."
