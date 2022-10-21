@@ -23,6 +23,8 @@ jobs:
             echo "Environment from caller : $Environment"
             echo "::set-output name=env_var::$Environment"
   call-workflow-passing-data:
+    needs:
+      - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment: ${{ needs.print.outputs.env_var}}
