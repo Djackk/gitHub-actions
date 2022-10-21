@@ -1,0 +1,35 @@
+name: Call a reusable workflow for Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      Region:
+        description: 'Region'
+        default: 'us-east-1'
+        required: true
+        type: Region
+
+jobs:
+  Deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Region Check
+        run: |
+          echo "${{ github.event.inputs.Region }}"
+
+      - name: Deployment Check Failed
+        if: github.ref_type != 'tag'
+        run: |
+          echo "Please select a tag for the deployment"
+          exit 1
+      - name: Deployment Check Passed
+        if: github.ref_type == 'tag'
+        run: |
+          echo "Code will be deployed from the tag ${{ github.ref }}"
+
+  call-workflow-passing-data:
+    uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
+    with:
+      Environment : "Prod"
+      branch: ${{ github.ref }}
+      Region: ${{ github.event.inputs.Region }}
