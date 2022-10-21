@@ -28,6 +28,6 @@ jobs:
       - print
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      Environment: ${{ needs.print.outputs.env_var}}
+      Environment: ${{ github.event.inputs.Region }}
       branch: ${{ github.ref }}
       Region: ${{ github.event.inputs.Region }}
