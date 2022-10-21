@@ -27,7 +27,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deployment from tag
+      - name: Deployment Status
         run: |
           echo "Code will be deployed from ${{ github.ref }}"
 
