@@ -10,7 +10,7 @@ on:
         type: Region
 
 jobs:
-  Deployment Status:
+  Deployment_Status:
     runs-on: ubuntu-latest
     steps:
       - name: Region Check
@@ -27,9 +27,9 @@ jobs:
         run: |
           echo "Code will be deployed from the tag ${{ github.ref }}"
 
-  call-workflow-passing-data:
+  Call-Release:
     needs:
-      - Deployment
+      - Deployment_Status
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
       Environment : "Prod"
