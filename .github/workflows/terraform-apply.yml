@@ -45,7 +45,7 @@ jobs:
   Build-Terraform:
     needs:
       - terraform
-    uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
+    uses: Djackk/gitHub-actions/.github/workflows/Build-Terraform.yml@main
     with:
       branch: ${{ github.ref }}
       Environment: dev
