@@ -21,15 +21,9 @@ jobs:
         run: |
           echo "${{ github.event.inputs.Region }}"
 
-      - name: Deployment Check Failed
-        if: github.ref_type != 'tag'
+      - name: Deployment Status
         run: |
-          echo "Please select a tag for the deployment"
-          exit 1
-      - name: Deployment Check Passed
-        if: github.ref_type == 'tag'
-        run: |
-          echo "Code will be deployed from the tag ${{ github.ref }}"
+          echo "Code will be deployed from ${{ github.ref }}"
           exit 0
   terraform:
     needs:
