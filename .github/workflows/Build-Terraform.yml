@@ -33,9 +33,9 @@ jobs:
         - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
           shell: bash
 
-        - name: Version
-          id: version
-          uses: jivanpuri/get-version@v1.3
+#        - name: Version
+#          id: version
+#          uses: jivanpuri/get-version@v1.3
 
         # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
         - name: Setup Terraform
