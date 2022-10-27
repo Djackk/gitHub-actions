@@ -1,13 +1,16 @@
-name: Deploy test
+name: Deploy  Apply test
 
 on:
-  workflow_dispatch:
-    inputs:
-      Region:
-        description: 'Region'
-        default: 'us-central1'
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+#  workflow_dispatch:
+#    inputs:
+#      Region:
+#        description: 'Region'
+#        default: 'us-central1'
+#        required: true
+#        type: string
 
 jobs:
   Deployment_Check:
@@ -17,9 +20,9 @@ jobs:
         run: |
           echo "The code is being deployed in Prod"
 
-      - name: Region Check
-        run: |
-          echo "${{ github.event.inputs.Region }}"
+#      - name: Region Check
+#        run: |
+#          echo "${{ github.event.inputs.Region }}"
 
       - name: Deployment Status
         run: |
@@ -57,10 +60,10 @@ jobs:
           workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
           service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
 
-      - name: terraform plan
-        uses: dflook/terraform-plan@v1
+      - name: terraform apply
+        uses: dflook/terraform-apply@v1
         with:
-          path : '././src'
+          path: my-terraform-config
 
 
 
