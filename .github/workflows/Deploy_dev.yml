@@ -59,7 +59,7 @@ jobs:
 
       - name: Build Terraform
         id: version
-        uses: Djackk/gitHub-actions/terraform-build@v1.12
+        uses: Djackk/gitHub-actions/terraform-build@main
         with:
           branch: ${{github.ref}}
           env: dev
