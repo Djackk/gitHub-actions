@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "domain" {
-  default     = "outbound"
+  default     = "inbound"
   description = "The domain for the component e.g. Outbound, Inbound, Production etc"
 }
 
