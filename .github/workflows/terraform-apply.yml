@@ -43,7 +43,7 @@ jobs:
         service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
 
     - name: Build Terraform
-      id: '1'
+      id: 1
       uses: Djackk/src-main/Build-Terraform.yml/Build-Terraform.yml@main
       with:
         branch: ${{ github.ref }}
