@@ -27,6 +27,8 @@ jobs:
           exit 0
 
   terraform:
+    needs:
+      - Deployment_Check
     name: 'Terraform'
     runs-on: ubuntu-latest
     env:

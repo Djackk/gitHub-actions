@@ -32,6 +32,8 @@ jobs:
           echo "Code will be deployed from the tag ${{ github.ref }}"
           exit 0
   terraform:
+    needs:
+      -   Deployment_Check
     name: 'Terraform'
     runs-on: ubuntu-latest
     env:
