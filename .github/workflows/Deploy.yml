@@ -64,10 +64,10 @@ jobs:
 
       - name: Build Terraform
         id: version
-        uses: jivanpuri/terraform-build@v1.10
+        uses: Djackk/gitHub-actions/terraform-build@main
         with:
           branch: ${{github.ref}}
-          env: dev
+          environment: dev
           region: ${{github.event.inputs.Region}}
 
 
