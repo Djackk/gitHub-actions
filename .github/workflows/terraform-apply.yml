@@ -47,7 +47,7 @@ jobs:
       uses: jivanpuri/terraform-build@v1.10
       with:
         branch: ${{ github.ref }}
-        environment: dev
+        env: dev
         region: ${{ github.event.inputs.Region }}
 
 
