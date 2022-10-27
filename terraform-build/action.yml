@@ -67,3 +67,10 @@ runs:
         cd src
         terraform plan -input=false
       shell: bash
+
+    - name: Terraform Apply
+      if: steps.check_files.outputs.files_exists == 'false'
+      run: |
+        cd src
+        terraform apply -input=false
+      shell: bash
