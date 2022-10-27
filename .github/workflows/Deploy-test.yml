@@ -60,7 +60,7 @@ jobs:
       - name: terraform plan
         uses: dflook/terraform-plan@v1
         with:
-          path : Djackk/gitHub-actions/src@main
+          path : '././src'
 
 
 
