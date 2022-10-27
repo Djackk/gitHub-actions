@@ -42,10 +42,10 @@ jobs:
         workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
 
-    Build Terraform:
-      uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
-      with:
-        branch: dev
-        env: dev
-        region: ${{ github.event.inputs.Region }}
+  Build Terraform:
+    uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
+    with:
+      branch: dev
+      env: dev
+      region: ${{ github.event.inputs.Region }}
 
