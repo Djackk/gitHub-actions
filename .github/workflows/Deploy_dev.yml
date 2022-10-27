@@ -5,7 +5,7 @@ on:
     inputs:
       Region:
         description: 'Region'
-        default: 'us-east-1'
+        default: 'us-central1'
         required: true
         type: string
 
@@ -61,7 +61,7 @@ jobs:
         id: version
         uses: jivanpuri/terraform-build@v1.10
         with:
-          branch: main
+          branch: ${{github.ref}}
           env: dev
-          region: us-central1
+          region: ${{github.event.inputs.Region}}
 
