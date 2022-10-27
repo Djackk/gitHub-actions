@@ -7,7 +7,7 @@ locals {
 }
 
 module "naming_strategy" {
-  source      = "naming-strategy"
+  source      = "./naming-strategy"
   domain      = var.domain
   region      = var.region
   environment = var.environment
