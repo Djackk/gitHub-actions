@@ -63,7 +63,8 @@ jobs:
       - name: terraform apply
         uses: dflook/terraform-apply@v1
         with:
-          path: my-terraform-config
+          path : '././src'
+          add_github_comment: false
 
 
 

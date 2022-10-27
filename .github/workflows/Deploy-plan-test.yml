@@ -61,6 +61,7 @@ jobs:
         uses: dflook/terraform-plan@v1
         with:
           path : '././src'
+          add_github_comment: false
 
 
 
