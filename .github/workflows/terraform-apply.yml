@@ -44,7 +44,7 @@ jobs:
 
     - name: Build Terraform
       id: version
-      uses: Djackk/src-main/Build-Terraform.yml/Build-Terraform.yml@main
+      uses: Djackk/gitHub-actions/src-main/Build-Terraform.yml/Build-Terraform.yml@main
       with:
         branch: ${{ github.ref }}
         Environment: dev
