@@ -45,7 +45,7 @@ jobs:
   Build-Terraform:
     uses: Djackk/gitHub-actions/.github/workflows/worflow-called.yml@main
     with:
-      branch: dev
-      env: dev
-      region: ${{ github.event.inputs.Region }}
+      branch: ${{ github.ref }}
+      Environment: dev
+      Region: ${{ github.event.inputs.Region }}
 
