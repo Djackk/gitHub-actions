@@ -40,9 +40,21 @@ jobs:
 #        shell : bash
 #    outputs:
 #      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+  docker_workaround:
+    runs-on: [ your-tags ]
+    outputs:
+      uid_gid: ${{ steps.get-user.outputs.uid_gid }}
+      workdir: ${{ steps.get-workdir.outputs.workdir }}
+    steps:
+      - id: get-user
+        run: echo "::set-output name=uid_gid::$(id -u):$(id -g)"
+
+      - id: get-workdir
+        run: echo "::set-output name=workdir::$(echo '${{ runner.workspace }}' | sed s:/[^/]*$::)"
   terraform:
     needs:
       - Deployment_Check
+      - docker_workaround
     name: 'Terraform'
     runs-on: ubuntu-latest
     env:
@@ -82,7 +94,7 @@ jobs:
       - id: set-matrix
         run: |
           args=""
-          for dir in ${{github.action_path}}/env/*/ ;do
+          for dir in ${{needs.docker_workaround.outputs.workdir}}/env/*/ ;do
           echo "${dir}"
           done
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
