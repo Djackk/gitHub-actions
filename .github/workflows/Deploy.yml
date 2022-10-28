@@ -58,7 +58,7 @@ jobs:
           args+="\""$(basename "$dir")"\","
           done
           echo "${args%?}"
-          echo '::set-output name=env_matrix::[ ${args%?} ]'
+          echo '::set-output name=env_matrix::${args%?}'
         shell: bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
@@ -74,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [ ${{ fromJson(needs.Environment_Setup.outputs.env_matrix) }} ]
+        env: ${{ fromJson(needs.Environment_Setup.outputs.env_matrix) }}
         region: [ "us-central1" ]
         exclude:
           - env : dev
