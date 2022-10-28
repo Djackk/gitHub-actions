@@ -27,12 +27,11 @@ jobs:
 #          echo "Code will be deployed from the tag ${{ github.ref }}"
 #          exit 0
   build-matrix:
-    runs-on: ubuntu-latest
     steps:
       - id: set-matrix
         run: |
           args=""
-          cd src
+          cd env
           for dir in env/*;do
           args+="\""$(basename "$dir")"\","
           done
@@ -80,13 +79,26 @@ jobs:
           workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
           service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
 
-      - name: Build and Apply Terraform
-        id: version
-        uses: Djackk/gitHub-actions/terraform-build@main
-        with:
-          branch: ${{github.ref}}
-          env: ${{matrix.env}}
-          region: ${{matrix.region}}
+      - id: set-matrix
+        run: |
+          args=""
+          cd etc
+          for dir in env/*;do
+          args+="\""$(basename "$dir")"\","
+          done
+          echo "${args%?}"
+        #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
+        shell: bash
+#        outputs:
+#          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+
+#      - name: Build and Apply Terraform
+#        id: version
+#        uses: Djackk/gitHub-actions/terraform-build@main
+#        with:
+#          branch: ${{github.ref}}
+#          env: ${{matrix.env}}
+#          region: ${{matrix.region}}
 
 
 
