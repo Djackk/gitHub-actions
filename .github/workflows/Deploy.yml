@@ -26,20 +26,20 @@ jobs:
 #        run: |
 #          echo "Code will be deployed from the tag ${{ github.ref }}"
 #          exit 0
-  build-matrix:
-    steps:
-      - id: set-matrix
-        run: |
-          args=""
-          cd env
-          for dir in env/*;do
-          args+="\""$(basename "$dir")"\","
-          done
-          echo "${args%?}"
-#          echo '::set-output name=env_matrix::[ "${args%?}" ]'
-        shell : bash
-    outputs:
-      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+#  build-matrix:
+#    steps:
+#      - id: set-matrix
+#        run: |
+#          args=""
+#          cd env
+#          for dir in env/*;do
+#          args+="\""$(basename "$dir")"\","
+#          done
+#          echo "${args%?}"
+##          echo '::set-output name=env_matrix::[ "${args%?}" ]'
+#        shell : bash
+#    outputs:
+#      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
   terraform:
     needs:
       - Deployment_Check
