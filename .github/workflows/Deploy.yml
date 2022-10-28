@@ -82,8 +82,7 @@ jobs:
       - id: set-matrix
         run: |
           args=""
-          cd env
-          for dir in /home/runner/work/gitHub-actions/env/*;do
+          for dir in ../env/*/ ;do
           echo "${dir}"
           done
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
