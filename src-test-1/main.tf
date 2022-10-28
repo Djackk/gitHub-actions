@@ -4,7 +4,6 @@ locals {
   cloud_function_version    = "1.0.2"
   api_gw_service_account_id = "hello-world-cloud-function-svc"
 #  api_spec  = templatefile("${path.module}/${local.api_spec_file_path}", { function_uri = module.cloud_function.function_uri })
-  # test
 }
 
 module "naming_strategy" {
