@@ -38,7 +38,7 @@ runs:
       id: check_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
+        files: "../env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Format
@@ -49,13 +49,6 @@ runs:
       shell: bash
       continue-on-error: true
 
-    - name: Post Format
-      if: always() && github.ref != 'refs/heads/${{ inputs.branch }}' && (steps.fmt.outcome == 'success' || steps.fmt.outcome == 'failure')
-      uses: robburger/terraform-pr-commenter@v1
-      with:
-        commenter_type: fmt
-        commenter_input: ${{ format('{0}{1}', steps.fmt.outputs.stdout, steps.fmt.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.fmt.outputs.exitcode }}
 
     - name: Terraform Init
       id: init
@@ -64,13 +57,6 @@ runs:
         terraform init
       shell: bash
 
-    - name: Post Init
-      if: always() && github.ref != 'refs/heads/${{ inputs.branch }}' && (steps.init.outcome == 'success' || steps.init.outcome == 'failure')
-      uses: robburger/terraform-pr-commenter@v1
-      with:
-        commenter_type: init
-        commenter_input: ${{ format('{0}{1}', steps.init.outputs.stdout, steps.init.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.init.outputs.exitcode }}
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan with env
@@ -81,16 +67,8 @@ runs:
         terraform plan -input=false -var-file="../env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
       shell: bash
 
-    - name: Post Plan - ${{ matrix['workspace'] }}
-      if: always() && github.ref != 'refs/heads/${{ inputs.branch }}' && (steps.plan.outcome == 'success' || steps.plan.outcome == 'failure')
-      uses: robburger/terraform-pr-commenter@v1
-      with:
-        commenter_type: plan
-        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
-
     - name: Terraform Apply
-      if: steps.check_files.outputs.files_exists == 'false'
+      if: steps.check_files.outputs.files_exists == 'true'
       run: |
         cd src
         terraform apply -auto-approve -input=false
