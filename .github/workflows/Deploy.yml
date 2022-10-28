@@ -88,7 +88,7 @@ jobs:
         with:
           workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
           service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
-      - run: echo '${{ runner.workspace }}' | sed s:/[^/]*$:: >> $GITHUB_PATH
+      - run: echo "${{github.action_path}}" >> $GITHUB_PATH
         shell: bash
 
       - id: set-matrix
