@@ -16,16 +16,16 @@ jobs:
         run: |
           echo "${{ github.event.inputs.Region }}"
 
-      - name: Deployment Check Failed
-        if: github.ref_type != 'tag'
-        run: |
-          echo "Please select a Tag/Version for the deployment"
-          exit 1
-      - name: Deployment Check Passed
-        if: github.ref_type == 'tag'
-        run: |
-          echo "Code will be deployed from the tag ${{ github.ref }}"
-          exit 0
+#      - name: Deployment Check Failed
+#        if: github.ref_type != 'tag'
+#        run: |
+#          echo "Please select a Tag/Version for the deployment"
+#          exit 1
+#      - name: Deployment Check Passed
+#        if: github.ref_type == 'tag'
+#        run: |
+#          echo "Code will be deployed from the tag ${{ github.ref }}"
+#          exit 0
   build-matrix:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           args+="\""$(basename "$dir")"\","
           done
           echo "${args%?}"
-          echo '::set-output name=env_matrix::[ ${args%?} ]'
+          echo '::set-output name=env_matrix::[ "${args%?}" ]'
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
   terraform:
