@@ -8,6 +8,11 @@ on:
         default: 'us-central1'
         required: true
         type: string
+      Environment:
+        description: 'Environment'
+        default: 'prod'
+        required: true
+        type: string
 
 jobs:
   Deployment_Check:
@@ -15,7 +20,7 @@ jobs:
     steps:
       - name: Environment
         run: |
-          echo "The code is being deployed in Prod"
+          echo "The code is being deployed in ${{github.event.inputs.Environment}} Environment"
 
       - name: Region Check
         run: |
@@ -68,7 +73,7 @@ jobs:
         uses: Djackk/gitHub-actions/terraform-build@main
         with:
           branch: ${{github.ref}}
-          environment: dev
+          env: ${{github.event.inputs.Environment}}
           region: ${{github.event.inputs.Region}}
 
 

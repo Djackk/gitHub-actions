@@ -1,4 +1,4 @@
-name: Deploy Dev
+name: terraform-deploy-dev
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Environment
         run: |
-          echo "The code is being deployed in ${{github.event.inputs.Environment}}"
+          echo "The code is being deployed in ${{github.event.inputs.Environment}} Environment"
 
       - name: Region Check
         run: |
