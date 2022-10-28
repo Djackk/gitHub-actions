@@ -28,6 +28,13 @@ jobs:
 #          exit 0
   Environment_Setup:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
       - Deployment_Check
     steps:
