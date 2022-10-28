@@ -71,5 +71,5 @@ runs:
       if: steps.check_files.outputs.files_exists == 'true'
       run: |
         cd src
-        terraform apply -auto-approve -input=false
+        terraform apply -auto-approve -input=false -var-file="../env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
       shell: bash
