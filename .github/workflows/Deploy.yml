@@ -52,7 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         env: [ ... ]
-        region: [ "us-central1","us-east1" ]
+        region: [ "us-central1" ]
         exclude:
           - env : dev
 
@@ -69,8 +69,6 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: ${{github.ref}}
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -82,8 +80,7 @@ jobs:
       - id: set-matrix
         run: |
           args=""
-          cd env/
-          ls env/
+          cd env
           for dir in '././env';do
           echo "${dir}"
           done
