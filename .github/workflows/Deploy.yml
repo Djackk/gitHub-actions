@@ -96,8 +96,9 @@ jobs:
           cd env
           args=""
           for dir in ./*/ ;do
-          basename "$dir"
+          args+="\""$(basename "$dir")"\","
           done
+          echo "${args%?}"
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
         shell: bash
 #        outputs:
