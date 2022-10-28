@@ -26,59 +26,11 @@ jobs:
 #        run: |
 #          echo "Code will be deployed from the tag ${{ github.ref }}"
 #          exit 0
-#  build-matrix:
-#    steps:
-#      - id: set-matrix
-#        run: |
-#          args=""
-#          cd env
-#          for dir in env/*;do
-#          args+="\""$(basename "$dir")"\","
-#          done
-#          echo "${args%?}"
-##          echo '::set-output name=env_matrix::[ "${args%?}" ]'
-#        shell : bash
-#    outputs:
-#      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
-  docker_workaround:
-    runs-on: ubuntu-latest
-    outputs:
-      uid_gid: ${{ steps.get-user.outputs.uid_gid }}
-      workdir: ${{ steps.get-workdir.outputs.workdir }}
-    steps:
-      - id: get-user
-        run: echo "::set-output name=uid_gid::$(id -u):$(id -g)"
-
-      - id: get-workdir
-        run: echo "::set-output name=workdir::$(echo '${{ runner.workspace }}' | sed s:/[^/]*$::)"
-  terraform:
+  Environment_Setup:
+    runs on: ubuntu-latest
     needs:
       - Deployment_Check
-      - docker_workaround
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    env:
-      GOOGLE_CLOUD_PROJECT: sandbox-20220909-4sfsll
-    environment: production
-    strategy:
-      fail-fast: false
-      matrix:
-        env: [ ... ]
-        region: [ "us-central1" ]
-        exclude:
-          - env : dev
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
     steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -99,18 +51,70 @@ jobs:
           args+="\""$(basename "$dir")"\","
           done
           echo "${args%?}"
-#          echo '::set-output name=env_matrix::[ "${args%?}" ]'
+          echo '::set-output name=env_matrix::[ "${args%?}" ]'
         shell: bash
+        outputs:
+          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+
+  terraform:
+    needs:
+      - Environment_Setup
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLOUD_PROJECT: sandbox-20220909-4sfsll
+    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [ fromJson(needs.Environment_Setup.outputs.env_matrix) ]
+        region: [ "us-central1" ]
+        exclude:
+          - env : dev
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - id: 'auth'
+#        name: 'Authenticate to Google Cloud'
+#        uses: 'google-github-actions/auth@v0'
+#        with:
+#          workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+#          service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
+#      - run: echo "${{github.action_path}}" >> $GITHUB_PATH
+#        shell: bash
+#
+#      - id: set-matrix
+#        run: |
+#          cd env
+#          args=""
+#          for dir in ./*/ ;do
+#          args+="\""$(basename "$dir")"\","
+#          done
+#          echo "${args%?}"
+#          echo '::set-output name=env_matrix::[ "${args%?}" ]'
+#        shell: bash
 #        outputs:
 #          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
 
-#      - name: Build and Apply Terraform
-#        id: version
-#        uses: Djackk/gitHub-actions/terraform-build@main
-#        with:
-#          branch: ${{github.ref}}
-#          env: ${{matrix.env}}
-#          region: ${{matrix.region}}
+      - name: Build and Apply Terraform
+        id: version
+        uses: Djackk/gitHub-actions/terraform-build@main
+        with:
+          branch: ${{github.ref}}
+          env: ${{matrix.env}}
+          region: ${{matrix.region}}
 
 
 
