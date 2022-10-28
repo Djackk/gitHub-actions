@@ -12,7 +12,7 @@ inputs:
   env:
     description: 'Name of the environment'
     required: false
-    default: 'prod'
+    default: 'dev'
   region:
     description: 'Name of the region'
     required: false
