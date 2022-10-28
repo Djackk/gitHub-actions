@@ -82,11 +82,9 @@ jobs:
       - id: set-matrix
         run: |
           args=""
-          cd env
-          for dir in /env/;do
+          for dir in ././etc;do
           echo "${dir}"
           done
-          echo "${args%?}"
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
         shell: bash
 #        outputs:
