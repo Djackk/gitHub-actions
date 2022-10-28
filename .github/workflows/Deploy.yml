@@ -93,6 +93,7 @@ jobs:
 
       - id: set-matrix
         run: |
+          cd env
           args=""
           for dir in ${{runner.workspace}}/env/*/ ;do
           basename "$dir"
