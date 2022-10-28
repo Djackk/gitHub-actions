@@ -82,8 +82,8 @@ jobs:
       - id: set-matrix
         run: |
           args=""
-          cd env
-          ls env
+          cd env/
+          ls env/
           for dir in '././env';do
           echo "${dir}"
           done
