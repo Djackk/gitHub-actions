@@ -37,6 +37,7 @@ jobs:
           done
           echo "${args%?}"
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
+        shell : bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
   terraform:
