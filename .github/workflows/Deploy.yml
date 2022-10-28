@@ -83,7 +83,7 @@ jobs:
         run: |
           args=""
           cd env
-          for dir in env/;do
+          for dir in env/*/;do
           args+="\""$(basename "$dir")"\","
           done
           echo "${args%?}"
