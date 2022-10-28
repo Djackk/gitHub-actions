@@ -95,7 +95,7 @@ jobs:
         run: |
           cd env
           args=""
-          for dir in ${{runner.workspace}}/env/*/ ;do
+          for dir in ./*/ ;do
           basename "$dir"
           done
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
