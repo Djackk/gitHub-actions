@@ -3,11 +3,6 @@ name: terraform-deploy
 on:
   workflow_dispatch:
     inputs:
-      Region:
-        description: 'Region'
-        default: 'us-central1'
-        required: true
-        type: string
 
 jobs:
   Deployment_Check:
@@ -39,6 +34,11 @@ jobs:
     env:
       GOOGLE_CLOUD_PROJECT: sandbox-20220909-4sfsll
     environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [ "dev" ]
+        region: [ "us-central1","us-east1" ]
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -69,7 +69,7 @@ jobs:
         with:
           branch: ${{github.ref}}
           environment: dev
-          region: ${{github.event.inputs.Region}}
+          region: ${{matrix.region}}
 
 
 

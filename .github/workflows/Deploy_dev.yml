@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_CLOUD_PROJECT: sandbox-20220919-xiz5gh
-    environment: production
+    environment: dev
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
