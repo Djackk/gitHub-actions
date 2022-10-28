@@ -27,7 +27,7 @@ jobs:
 #          echo "Code will be deployed from the tag ${{ github.ref }}"
 #          exit 0
   Environment_Setup:
-    runs on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs:
       - Deployment_Check
     steps:
@@ -53,8 +53,8 @@ jobs:
           echo "${args%?}"
           echo '::set-output name=env_matrix::[ "${args%?}" ]'
         shell: bash
-        outputs:
-          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+    outputs:
+      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
 
   terraform:
     needs:
