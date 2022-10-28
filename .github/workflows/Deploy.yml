@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [ "dev" ]
+        env: [ "prod*" ]
         region: [ "us-central1","us-east1" ]
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -68,7 +68,7 @@ jobs:
         uses: Djackk/gitHub-actions/terraform-build@main
         with:
           branch: ${{github.ref}}
-          environment: dev
+          env: ${{matrix.env}}
           region: ${{matrix.region}}
 
 
