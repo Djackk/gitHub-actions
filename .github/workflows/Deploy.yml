@@ -41,7 +41,7 @@ jobs:
 #    outputs:
 #      env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
   docker_workaround:
-    runs-on: [ your-tags ]
+    runs-on: ubuntu-latest
     outputs:
       uid_gid: ${{ steps.get-user.outputs.uid_gid }}
       workdir: ${{ steps.get-workdir.outputs.workdir }}
