@@ -68,7 +68,7 @@ jobs:
         uses: Djackk/gitHub-actions/terraform-build@main
         with:
           branch: ${{github.ref}}
-          env: ${{github.event.inputs.Environment}}"
+          env: ${{github.event.inputs.Environment}}
           region: ${{github.event.inputs.Region}}
 
 
