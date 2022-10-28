@@ -83,7 +83,7 @@ jobs:
         run: |
           args=""
           cd env
-          for dir in "/home/runner/work/gitHub-actions/gitHub-actions/env/";do
+          for dir in /home/runner/work/gitHub-actions/env/;do
           echo "${dir}"
           done
 #          echo '::set-output name=env_matrix::[ "${args%?}" ]'
