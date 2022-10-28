@@ -1,4 +1,4 @@
-name: Deploy
+name: terraform-deploy-canary
 
 on:
   workflow_dispatch:
