@@ -84,7 +84,7 @@ jobs:
           args=""
           cd env
           for dir in env/;do
-               echo ${dir}
+               echo "${dir}"
 #          args+="\""$(basename "$dir")"\","
           done
 #          echo "${args%?}"
