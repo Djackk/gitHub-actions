@@ -1,0 +1,72 @@
+name: 'Build Terraform'
+description: 'Generates a tag for the repo'
+
+inputs:
+  terraform-version:
+    description: 'Terraform version'
+    required: false
+    default: 'v1'
+  branch: # id of input
+    description: 'Name of the master branch'
+    required: false
+    default: ''
+    type: string
+  environment:
+    description: 'Environment'
+    default: ''
+    required: true
+    type: string
+  region:
+    description: 'Region'
+    default: ''
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Branch
+      run: echo Executing against ${{ inputs.branch }} branch.
+      shell: bash
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: |
+        cd src
+        terraform init -input=false
+      shell: bash
+
+    # check if environment specific file exists
+    - name: Check file existence
+      id: check_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "../env/${{ inputs.environment }}/terraform.tfvars"
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan with env
+      if: steps.check_files.outputs.files_exists == 'true'
+      run: |
+        cd src
+        terraform plan -input=false -var-file="../env/${{ inputs.environment }}/terraform.tfvars"
+      shell: bash
+
+    - name: Terraform Plan
+      if: steps.check_files.outputs.files_exists == 'false'
+      run: |
+        cd src
+        terraform plan -input=false
+      shell: bash
+
+    - name: Terraform Apply
+      if: steps.check_files.outputs.files_exists == 'false'
+      run: |
+        cd src
+        terraform apply -auto-approve -input=false
+      shell: bash
