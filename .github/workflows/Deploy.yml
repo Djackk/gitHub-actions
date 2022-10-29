@@ -63,8 +63,34 @@ jobs:
           echo "${args%?}"
           echo ::set-output name=env_matrix::["$(echo "${args%?}")"]
         shell: bash
+
+      - id: set-region-matrix
+        run: |
+          cd env
+          args=()
+          for dir in ./*/*/;do
+          ag="$(basename "$dir")"
+          echo "${ag}"
+          if  ! [[ "$(basename "$dir")" =~ ^dev.* ]];
+          then
+          for subdir in "$dir"/*/;do
+          echo "$(basename "$subdir")"
+          args+=("$(basename "$subdir")")
+          done
+          fi
+          # args+="\""$(basename "$dir")"\","
+          done
+          UNIQ_IDS=($(printf "%s\n" "${args[@]}" | sort -u))
+          regions=""
+          for region in ${UNIQ_IDS[@]}; do
+          regions+="\""${region}"\","
+          done
+          echo "${regions%?}"
+          echo ::set-output name=region_matrix::["$(echo "${regions%?}")"]
+        shell: bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+      region_matrix: ${{ steps.set-region-matrix.outputs.region_matrix }}
 
   terraform:
     needs:
