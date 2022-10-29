@@ -116,6 +116,20 @@ jobs:
 #       Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+
+      # check if environment specific file exists
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
+
+      - name: Check for Existence
+        if: steps.check_files.outputs.files_exists == 'false'
+        run: |
+          echo "Skipping as Environment file not available...."
+          exit 1
+        shell: bash
 #
 #      - id: 'auth'
 #        name: 'Authenticate to Google Cloud'
@@ -140,6 +154,7 @@ jobs:
 #          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
 
       - name: Build and Apply Terraform
+        if: steps.check_files.outputs.files_exists == 'true'
         id: version
         uses: Djackk/gitHub-actions/terraform-build@main
         with:
