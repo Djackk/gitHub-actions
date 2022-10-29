@@ -59,6 +59,7 @@ jobs:
           done
           echo "${args%?}"
           echo ::set-output name=env_matrix::["$(echo "${args%?}")"]
+          cd ../
         shell: bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
