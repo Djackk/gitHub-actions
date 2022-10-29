@@ -76,7 +76,7 @@ jobs:
       fail-fast: false
       matrix:
         env:  ${{fromJson(needs.Environment_Setup.outputs.env_matrix)}}
-        region: [ "us-central1" ]
+        region: [ "us-central1","us-east1" ]
         exclude:
           - env : dev
 
