@@ -69,12 +69,9 @@ jobs:
           cd env
           args=()
           for dir in ./*/;do
-          ag="$(basename "$dir")"
-          echo "${ag}"
           if  ! [[ "$(basename "$dir")" =~ ^dev.* ]];
           then
           for subdir in "$dir"/*/;do
-          echo "$(basename "$subdir")"
           args+=("$(basename "$subdir")")
           done
           fi
