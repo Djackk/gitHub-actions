@@ -68,7 +68,7 @@ jobs:
         run: |
           cd env
           args=()
-          for dir in ./*/*/;do
+          for dir in ./*/;do
           ag="$(basename "$dir")"
           echo "${ag}"
           if  ! [[ "$(basename "$dir")" =~ ^dev.* ]];
