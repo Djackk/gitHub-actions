@@ -55,7 +55,10 @@ jobs:
           cd env
           args=""
           for dir in ./*/ ;do
+          if [[ $dir != dev* ]];
+          then
           args+="\""$(basename "$dir")"\","
+          fi
           done
           echo "${args%?}"
           echo ::set-output name=env_matrix::["$(echo "${args%?}")"]
@@ -78,7 +81,7 @@ jobs:
         env:  ${{fromJson(needs.Environment_Setup.outputs.env_matrix)}}
         region: [ "us-central1","us-east1" ]
         exclude:
-          - env : dev
+          - env : dev*
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
