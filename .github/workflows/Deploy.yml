@@ -58,7 +58,7 @@ jobs:
           args+="\""$(basename "$dir")"\","
           done
           echo "${args%?}"
-          echo ::set-output name=env_matrix::"$(echo "${args%?}")"
+          echo ::set-output name=env_matrix::[ "$(echo "${args%?}")" ]
         shell: bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
