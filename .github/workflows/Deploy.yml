@@ -80,8 +80,6 @@ jobs:
       matrix:
         env:  ${{fromJson(needs.Environment_Setup.outputs.env_matrix)}}
         region: [ "us-central1","us-east1" ]
-        exclude:
-          - env : dev*
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
