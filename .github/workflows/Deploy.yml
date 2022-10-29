@@ -128,7 +128,6 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'false'
         run: |
           echo "Skipping as Environment file not available...."
-          exit 1
         shell: bash
 #
 #      - id: 'auth'
