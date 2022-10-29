@@ -55,14 +55,13 @@ jobs:
           cd env
           args=""
           for dir in ./*/ ;do
-          if [[ $dir != dev* ]];
+          if  ! [[ "$(basename "$dir")" =~ ^dev.* ]];
           then
           args+="\""$(basename "$dir")"\","
           fi
           done
           echo "${args%?}"
           echo ::set-output name=env_matrix::["$(echo "${args%?}")"]
-          cd ../
         shell: bash
     outputs:
       env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
