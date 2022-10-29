@@ -40,9 +40,17 @@ runs:
       with:
         files: "env/${{ inputs.env }}/${{ inputs.region }}/terraform.tfvars"
 
+    - name: Check for Existence
+      if: steps.check_files.outputs.files_exists == 'false'
+      run: |
+        echo "Skipping as Environment file not available...."
+        exit 1
+      shell: bash
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Format
       id: fmt
+      if: steps.check_files.outputs.files_exists == 'true'
       run: |
         cd src
         terraform fmt -check -recursive
@@ -52,6 +60,7 @@ runs:
 
     - name: Terraform Init
       id: init
+      if: steps.check_files.outputs.files_exists == 'true'
       run: |
         cd src
         terraform init
