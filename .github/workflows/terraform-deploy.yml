@@ -130,7 +130,7 @@ jobs:
           echo "Skipping as Environment file not available...."
         shell: bash
 
-      - run: echo Executing against ${{ github.ref }} branch.
+      - run: echo Executing against ${{ github.ref }}.
         shell: bash
 
       - name: Check for Existence
