@@ -128,7 +128,7 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'false'
         run: |
           echo "Skipping as Environment file not available...."
-        shell:
+        shell: bash
 
       - run: echo Executing against ${{ github.ref }} branch.
         shell: bash
