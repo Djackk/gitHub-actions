@@ -68,13 +68,69 @@ jobs:
           workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
           service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
 
-      - name: Build and Apply Terraform
-        id: version
-        uses: Djackk/gitHub-actions/terraform-build@main
+#      - name: Build and Apply Terraform
+#        id: version
+#        uses: Djackk/gitHub-actions/terraform-build@main
+#        with:
+#          branch: ${{github.ref}}
+#          env: ${{github.event.inputs.Environment}}
+#          region: ${{github.event.inputs.Region}}
+
+
+      # check if environment specific file exists
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
         with:
-          branch: ${{github.ref}}
-          env: ${{github.event.inputs.Environment}}
-          region: ${{github.event.inputs.Region}}
+          files: "env/${{ github.event.inputs.Environment }}/${{ github.event.inputs.Region }}/terraform.tfvars"
+
+      - name: Check for Existence
+        if: steps.check_files.outputs.files_exists == 'false'
+        run: |
+          echo "Skipping as Environment file not available...."
+          exit 0
+        shell: bash
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        if: steps.check_files.outputs.files_exists == 'true'
+        uses: hashicorp/setup-terraform@v1
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Format
+        id: fmt
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform fmt -check -recursive
+        shell: bash
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform init
+        shell: bash
+
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan with env
+        id: plan
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform plan -input=false -var-file="../env/${{ github.event.inputs.Environment }}/${{ github.event.inputs.Region }}/terraform.tfvars"
+        shell: bash
+
+      - name: Terraform Apply
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform apply -auto-approve -input=false -var-file="../env/${{ github.event.inputs.Environment }}/${{ github.event.inputs.Region }}/terraform.tfvars"
+        shell: bash
+
 
 
 
