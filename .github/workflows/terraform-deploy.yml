@@ -16,16 +16,16 @@ jobs:
         run: |
           echo "${{ github.event.inputs.Region }}"
 
-#      - name: Deployment Check Failed
-#        if: github.ref_type != 'tag'
-#        run: |
-#          echo "Please select a Tag/Version for the deployment"
-#          exit 1
-#      - name: Deployment Check Passed
-#        if: github.ref_type == 'tag'
-#        run: |
-#          echo "Code will be deployed from the tag ${{ github.ref }}"
-#          exit 0
+      - name: Deployment Check Failed
+        if: github.ref_type != 'tag'
+        run: |
+          echo "Please select a Tag/Version for the deployment"
+          exit 1
+      - name: Deployment Check Passed
+        if: github.ref_type == 'tag'
+        run: |
+          echo "Code will be deployed from the tag ${{ github.ref }}"
+          exit 0
   Environment_Setup:
     runs-on: ubuntu-latest
     defaults:
@@ -128,38 +128,66 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'false'
         run: |
           echo "Skipping as Environment file not available...."
-        shell: bash
-#
-#      - id: 'auth'
-#        name: 'Authenticate to Google Cloud'
-#        uses: 'google-github-actions/auth@v0'
-#        with:
-#          workload_identity_provider: 'projects/932079530572/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-#          service_account: 'auto-deploy-standard-svc@sandbox-20220909-4sfsll.iam.gserviceaccount.com'
-#      - run: echo "${{github.action_path}}" >> $GITHUB_PATH
-#        shell: bash
-#
-#      - id: set-matrix
-#        run: |
-#          cd env
-#          args=""
-#          for dir in ./*/ ;do
-#          args+="\""$(basename "$dir")"\","
-#          done
-#          echo "${args%?}"
-#          echo '::set-output name=env_matrix::[ "${args%?}" ]'
-#        shell: bash
-#        outputs:
-#          env_matrix: ${{ steps.set-matrix.outputs.env_matrix }}
+        shell:
 
-      - name: Build and Apply Terraform
+      - run: echo Executing against ${{ github.ref }} branch.
+        shell: bash
+
+      - name: Check for Existence
+        if: steps.check_files.outputs.files_exists == 'false'
+        run: |
+          echo "Skipping as Environment file not available...."
+          exit 0
+        shell: bash
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
         if: steps.check_files.outputs.files_exists == 'true'
-        id: version
-        uses: Djackk/gitHub-actions/terraform-build@main
-        with:
-          branch: ${{github.ref}}
-          env: ${{matrix.env}}
-          region: ${{matrix.region}}
+        uses: hashicorp/setup-terraform@v1
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Format
+        id: fmt
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform fmt -check -recursive
+        shell: bash
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform init
+        shell: bash
+
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan with env
+        id: plan
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform plan -input=false -var-file="../env/${{ matrix.env }}/${{ matrix.region }}/terraform.tfvars"
+        shell: bash
+
+      - name: Terraform Apply
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          terraform apply -auto-approve -input=false -var-file="../env/${{ matrix.env }}/${{ matrix.region }}/terraform.tfvars"
+        shell: bash
+
+#      - name: Build and Apply Terraform
+#        if: steps.check_files.outputs.files_exists == 'true'
+#        id: version
+#        uses: Djackk/gitHub-actions/terraform-build@main
+#        with:
+#          branch: ${{github.ref}}
+#          env: ${{matrix.env}}
+#          region: ${{matrix.region}}
 
 
 
