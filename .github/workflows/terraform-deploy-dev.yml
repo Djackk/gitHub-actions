@@ -76,7 +76,7 @@ jobs:
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
-          files: "env/${{ github.event.inputs.Environment }}/${{ matrix.region }}/terraform.tfvars"
+          files: "env/${{ github.event.inputs.Environment }}/${{ github.event.inputs.Region }}/terraform.tfvars"
 
       - name: Check for Existence
         if: steps.check_files.outputs.files_exists == 'false'
