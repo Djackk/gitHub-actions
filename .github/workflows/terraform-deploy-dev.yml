@@ -28,7 +28,7 @@ jobs:
 
       - name: Deployment Status
         run: |
-          echo "Code will be deployed from ${{ github.ref_NAME }}"
+          echo "Code will be deployed from $(echo ${{ github.ref_NAME }} cut -d "/" -name )"
           exit 0
 
   terraform:
