@@ -24,7 +24,7 @@ jobs:
       - name: Deployment Check Passed
         if: github.ref_type == 'tag'
         run: |
-          echo "Code will be deployed from the tag ${{ github.ref }}"
+          echo "Code will be deployed from the tag $(echo ${{ github.ref_NAME }} cut -d "/" -name )"
           exit 0
   Environment_Setup:
     runs-on: ubuntu-latest
