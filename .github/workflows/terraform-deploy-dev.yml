@@ -79,7 +79,7 @@ jobs:
       - name: 'Bump application version number'
         id: bump-version
         run: |
-          echo "${steps.check-branch.outputs.package_version}
+          echo "${steps.check-branch.outputs.package_version}"
           exit 0
 
       - id: 'auth'
