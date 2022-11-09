@@ -50,6 +50,8 @@ jobs:
           echo "package_version='dev-apks'" >> $GITHUB_OUTPUT
           echo "Skipping"
           fi
+    outputs:
+      output1: ${{ steps.check-branch.outputs.package_version }}
 
   terraform:
     needs:
@@ -79,8 +81,8 @@ jobs:
       - name: 'Bump application version number'
         id: bump-version
         run: |
-          echo "${{ steps.check-branch.outputs.package_version }}"
-          exit 0
+          echo "${{ needs.Deployment_Check.outputs.output1 }}"
+          exit 1
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
