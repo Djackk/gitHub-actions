@@ -36,6 +36,9 @@ jobs:
         run: |
           if [[ ${{ github.ref_NAME }} == 'main' ]]; then
           echo ::set-output name=isMaster::true
+          else
+          echo "Exiting"
+          exit 1
 
       - name: 'Bump application version number'
         id: bump-version
