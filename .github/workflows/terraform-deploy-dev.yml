@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Check for tag
         run: |
-          if [ ${{github.ref_type}} == 'tag']; then
+          if [ ${{github.ref_type}} == 'tag' ]; then
             echo "APK can only be created from a branch."
             exit 1
           else
