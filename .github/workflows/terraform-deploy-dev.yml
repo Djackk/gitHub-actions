@@ -44,7 +44,7 @@ jobs:
       - name: 'Bump application version number'
         id: bump-version
         run: |
-          if [ steps.check-branch.outputs.isMaster == 'true' ]
+          if [ steps.check-branch.outputs.isMaster == 'true' ]; then
           echo "Not Skipping"
           else
           echo "package_version='dev-apks' >> $GITHUB_OUTPUT
