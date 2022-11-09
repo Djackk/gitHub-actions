@@ -18,6 +18,11 @@ jobs:
   Deployment_Check:
     runs-on: ubuntu-latest
     steps:
+      - name: Check for tag
+        if: github.ref_type == 'tag'
+        run: |
+          echo "APK can only be created from a branch."
+          exit 1
       - name: Environment
         run: |
           echo "The code is being deployed in ${{github.event.inputs.Environment}} Environment"
@@ -30,6 +35,8 @@ jobs:
         run: |
           echo "Code will be deployed from $(echo ${{ github.ref_NAME }} cut -d "/" -name )"
           exit 0
+          
+      
 
   terraform:
     needs:
