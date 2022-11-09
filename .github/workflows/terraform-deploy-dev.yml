@@ -79,7 +79,6 @@ jobs:
       - name: 'Bump application version number'
         id: bump-version
         run: |
-          if [ steps.bump-version.outputs.isMaster == 'true' ]; then
           echo "${steps.check-branch.outputs.package_version}
           exit 0
 
