@@ -76,6 +76,13 @@ jobs:
         with:
           ref: ${{github.ref}}
 
+      - name: 'Bump application version number'
+        id: bump-version
+        run: |
+          if [ steps.bump-version.outputs.isMaster == 'true' ]; then
+          echo "${steps.check-branch.outputs.package_version}
+          exit 0
+
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0'
