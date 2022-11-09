@@ -34,7 +34,7 @@ jobs:
       - name: Check for master
         id: check-branch
         run: |
-          if [[ ${{ github.ref }} == 'main' ]]; then
+          if [[ ${{ github.ref_NAME }} == 'main' ]]; then
           echo ::set-output name=isMaster::true
 
       - name: 'Bump application version number'
