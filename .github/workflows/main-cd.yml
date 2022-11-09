@@ -58,7 +58,6 @@ jobs:
       - name: Check for master
         id: check-branch
         run: |
-          
           if [[ ${{ github.ref_NAME }} == 'master' ]]; then
           echo ::set-output name=isMaster::true
           else
@@ -75,8 +74,8 @@ jobs:
           yarn version --prerelease --preid dev --no-git-tag-version
           git add package.json
           PACKAGE_VERSION=$(yarn versions --json | jq -r .data.TakeoffMobile)
-#          git commit -m "[skip ci] Bump version to $PACKAGE_VERSION"
-#          git push
+          git commit -m "[skip ci] Bump version to $PACKAGE_VERSION"
+          git push
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           else
