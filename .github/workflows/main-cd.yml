@@ -1,9 +1,8 @@
 name: Main Distribution
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
 
 jobs:
   main-distribution:
