@@ -1,0 +1,226 @@
+name: Main Distribution
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  main-distribution:
+    runs-on: ubuntu-latest
+    name: Main Distribution
+    steps:
+      - name: 'Checkout repository on branch: ${{ github.REF }}'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.TAKEOFFBOT_TOKEN }}
+
+      - name: Authenticate to GitHub packages
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          registry-url: "https://npm.pkg.github.com"
+
+      - name: Install node modules
+        run: |
+          yarn install --ignore-scripts --prefer-offline
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TAKEOFFBOT_TOKEN }}
+
+      - name: Run install scripts
+        run: |
+          npm rebuild
+
+      #      - name: Run tests
+      #        run: |
+      #          yarn test --coverage
+      #
+      #      - name: SonarQube Scan
+      #        uses: sonarsource/sonarqube-scan-action@master
+      #        env:
+      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+      #          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
+      #        with:
+      #          args: >
+      #            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
+      #            -Dsonar.scm.provider=git
+      #            -Dsonar.projectVersion=${{ env.APP_VERSION }}
+      #
+      #      - name: SonarQube Quality Gate check
+      #        uses: sonarsource/sonarqube-quality-gate-action@master
+      #        timeout-minutes: 5
+      #        env:
+      #          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+      #          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
+
+      - name: Check for master
+        id: check-branch
+        run: |
+          if [[ ${{ github.ref_NAME }} == 'master' ]]; then
+          echo ::set-output name=isMaster::true
+          else
+          echo ::set-output name=isMaster::false
+          fi
+
+      - name: 'Bump application version number'
+        id: bump-version
+        run: |
+          if [ steps.check-branch.outputs.isMaster == 'true' ]
+          git config --global user.email "takeoffbot@takeoff.com"
+          git config --global user.name "Takeoffbot"
+          yarn config set version-tag-prefix ""
+          yarn version --prerelease --preid dev --no-git-tag-version
+          git add package.json
+          PACKAGE_VERSION=$(yarn versions --json | jq -r .data.TakeoffMobile)
+          git commit -m "[skip ci] Bump version to $PACKAGE_VERSION"
+          git push
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          else
+          echo "package_version=dev-apks" >> $GITHUB_OUTPUT
+          echo "Skiping bumping application version number as Dev Branch ${github.ref_NAME} is selected"
+          fi
+
+      - name: Create release
+        if : steps.check-branch.outputs.isMaster == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          tag_name: ${{ steps.bump-version.outputs.package_version }}
+          target_commitish: ${{ steps.bump-version.outputs.commit_sha }}
+
+      - name: Fetch new tag
+        if : steps.check-branch.outputs.isMaster == 'true'
+        run: |
+          git fetch
+
+      - name: Build Changelog
+        if : steps.check-branch.outputs.isMaster == 'true'
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          configuration: ".github/releasenotes-config.json"
+
+      - name: Add changelog to release
+        if : steps.check-branch.outputs.isMaster == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ steps.changelog.outputs.changelog }}
+          tag_name: ${{ steps.bump-version.outputs.package_version }}
+
+          #--Tag
+
+      - name: Gradle Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+      - name: Make Gradlew Executable
+        run: cd android && chmod +x ./gradlew
+
+      - name: Setup Gradle configuration
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - name: Build bundle
+        run: |
+          cd android && ./gradlew bundleRelease
+          mkdir -p android/app/build/outputs/bundle/release
+
+      - name: Sign bundle
+        id: sign-app
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_SIGNING_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Signed App Bundle
+          path: ${{ steps.sign-app.outputs.signedReleaseFile }}
+
+      - name: Upload bundle to release
+        if : steps.check-branch.outputs.isMaster == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.bump-version.outputs.package_version }}
+          files: ${{ steps.sign-app.outputs.signedReleaseFile }}
+          prerelease: true
+
+      - name: Extract APK from bundle
+        id: extract-apk
+        run: |
+          echo ${{ secrets.ANDROID_SIGNING_KEY }} | base64 --decode > takeoff-mobile-app-publish-key.jks
+
+          wget --no-verbose https://github.com/google/bundletool/releases/download/1.8.2/bundletool-all-1.8.2.jar
+
+          java -jar bundletool-all-1.8.2.jar \
+              build-apks \
+              --bundle=${{ steps.sign-app.outputs.signedReleaseFile }} \
+              --output=app-release.apks \
+              --mode=universal \
+              --ks=takeoff-mobile-app-publish-key.jks \
+              --ks-pass=pass:${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }} \
+              --ks-key-alias=${{ secrets.ANDROID_SIGNING_ALIAS }} \
+              --key-pass=pass:${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+
+          rm -f takeoff-mobile-app-publish-key.jks
+          rm -f bundletool-all-1.8.2.jar
+
+          APK_DIRECTORY=android/app/build/outputs/apk/release
+          if [ steps.check-branch.outputs.isMaster == 'true' ] then ;
+          APK_FILE_NAME=com.takeoff.mobileapp-v${{ steps.bump-version.outputs.package_version }}.apk
+          else
+          APK_FILE_NAME=com.takeoff.mobileapp-v${{ github.ref_NAME }}.apk
+          fi
+          APK_FILE_PATH=$APK_DIRECTORY/$APK_FILE_NAME
+
+          mkdir -p $APK_DIRECTORY
+
+          echo "APK file: $APK_FILE_NAME"
+          unzip -p app-release.apks universal.apk > $APK_FILE_PATH
+
+          rm -f app-release.apks
+
+          echo "apk_file=$(realpath $APK_FILE_PATH)" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: Signed APK
+          path: ${{ steps.extract-apk.outputs.apk_file }}
+
+      - name: Upload APK to release
+        if : steps.check-branch.outputs.isMaster == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.bump-version.outputs.package_version }}
+          files: ${{ steps.extract-apk.outputs.apk_file }}
+          prerelease: true
+
+      # Disabling until the test env is fixed in https://takeofftech.atlassian.net/browse/UI-473
+      # - name: Run E2E Tests
+      #   env:
+      #     USER_NAME_1R_ML: ${{ secrets.E2E_USER_NAME_1R_ML }}
+      #     USER_NAME_1R_1L: ${{ secrets.E2E_USER_NAME_1R_1L }}
+      #     USER_NAME_2R_1L: ${{ secrets.E2E_USER_NAME_2R_1L }}
+      #     USER_NAME_2R_ML: ${{ secrets.E2E_USER_NAME_2R_ML }}
+      #     PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+      #     SAUCE_USERNAME: ${{ secrets.E2E_SAUCE_USERNAME }}
+      #     SAUCE_ACCESS_KEY: ${{ secrets.E2E_SAUCE_ACCESS_KEY }}
+      #     TESTRAIL_USER_NAME: ${{ secrets.TESTRAIL_USER_NAME }}
+      #     TESTRAIL_USER_PASSWORD: ${{ secrets.TESTRAIL_USER_PASSWORD }}
+      #     TAKEOFF_MOBILE_APP_SUNBIRD_API_KEY: ${{secrets.TAKEOFF_MOBILE_APP_SUNBIRD_API_KEY}}
+      #     TAKEOFF_MOBILE_APP_SUNBIRD_APP_ID: ${{secrets.TAKEOFF_MOBILE_APP_SUNBIRD_APP_ID}}
+      #   run: |
+      #     npm run test:e2e:sauce
