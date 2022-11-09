@@ -68,21 +68,21 @@ jobs:
       - name: 'Bump application version number'
         id: bump-version
         run: |
-               if [ steps.check-branch.outputs.isMaster == 'true' ]
-               git config --global user.email "takeoffbot@takeoff.com"
-               git config --global user.name "Takeoffbot"
-               yarn config set version-tag-prefix ""
-               yarn version --prerelease --preid dev --no-git-tag-version
-               git add package.json
-               PACKAGE_VERSION=$(yarn versions --json | jq -r .data.TakeoffMobile)
-          #          git commit -m "[skip ci] Bump version to $PACKAGE_VERSION"
-          #          git push
-               echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-               echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-               else
-               echo "package_version=dev-apks" >> $GITHUB_OUTPUT
-               echo "Skiping bumping application version number as Dev Branch ${github.ref_NAME} is selected"
-               fi
+          if [ steps.check-branch.outputs.isMaster == 'true' ]
+          git config --global user.email "takeoffbot@takeoff.com"
+          git config --global user.name "Takeoffbot"
+          yarn config set version-tag-prefix ""
+          yarn version --prerelease --preid dev --no-git-tag-version
+          git add package.json
+          PACKAGE_VERSION=$(yarn versions --json | jq -r .data.TakeoffMobile)
+#          git commit -m "[skip ci] Bump version to $PACKAGE_VERSION"
+#          git push
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          else
+          echo "package_version=dev-apks" >> $GITHUB_OUTPUT
+          echo "Skiping bumping application version number as Dev Branch ${github.ref_NAME} is selected"
+          fi
 
       - name: Create release
         if : steps.check-branch.outputs.isMaster == 'true'
