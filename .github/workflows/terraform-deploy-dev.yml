@@ -19,10 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check for tag
-        if: github.ref_type == 'tag'
         run: |
-          echo "APK can only be created from a branch."
-          exit 1
+          if [ ${{github.ref_type}} == 'tag']; then
+            echo "APK can only be created from a branch."
+            exit 1
+          else
+            echo "APK created from a branch."
+            exit 1
+
       - name: Environment
         run: |
           echo "The code is being deployed in ${{github.event.inputs.Environment}} Environment"
