@@ -1,15 +1,23 @@
 name: Main Distribution
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
-    inputs:
 
 jobs:
   main-distribution:
     runs-on: ubuntu-latest
     name: Main Distribution
     steps:
-      - name: 'Checkout repository on branch: ${{ github.REF }}'
+      - name: Check for tag
+        if: github.ref_type == 'tag'
+        run: |
+          echo "APK can only be created from a branch."
+          exit 1
+
+      - name: 'Checkout repository on branch: ${{ github.ref_name }}'
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -31,42 +39,42 @@ jobs:
         run: |
           npm rebuild
 
-      #      - name: Run tests
-      #        run: |
-      #          yarn test --coverage
-      #
-      #      - name: SonarQube Scan
-      #        uses: sonarsource/sonarqube-scan-action@master
-      #        env:
-      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-      #          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
-      #        with:
-      #          args: >
-      #            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
-      #            -Dsonar.scm.provider=git
-      #            -Dsonar.projectVersion=${{ env.APP_VERSION }}
-      #
-      #      - name: SonarQube Quality Gate check
-      #        uses: sonarsource/sonarqube-quality-gate-action@master
-      #        timeout-minutes: 5
-      #        env:
-      #          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-      #          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
+      - name: Run tests
+        run: |
+          yarn test --coverage
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
+        with:
+          args: >
+            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
+            -Dsonar.scm.provider=git
+            -Dsonar.projectVersion=${{ env.APP_VERSION }}
+
+      - name: SonarQube Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: https://sonarqube.tom.takeoff.com
 
       - name: Check for master
         id: check-branch
         run: |
-          if [[ ${{ github.ref_NAME }} == 'master' ]]; then
-          echo ::set-output name=isMaster::true
+          if [[ ${{ github.ref_name }} == 'master' ]]; then
+            echo "isMaster=true" >> $GITHUB_OUTPUT
           else
-          echo ::set-output name=isMaster::false
+            echo "isMaster=false" >> $GITHUB_OUTPUT
           fi
 
       - name: 'Bump application version number'
+        if: steps.check-branch.outputs.isMaster == 'true'
         id: bump-version
         run: |
-          if [ steps.check-branch.outputs.isMaster == 'true' ]
           git config --global user.email "takeoffbot@takeoff.com"
           git config --global user.name "Takeoffbot"
           yarn config set version-tag-prefix ""
@@ -77,13 +85,9 @@ jobs:
           git push
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          else
-          echo "package_version=dev-apks" >> $GITHUB_OUTPUT
-          echo "Skiping bumping application version number as Dev Branch ${github.ref_NAME} is selected"
-          fi
 
       - name: Create release
-        if : steps.check-branch.outputs.isMaster == 'true'
+        if: steps.check-branch.outputs.isMaster == 'true'
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
@@ -91,12 +95,12 @@ jobs:
           target_commitish: ${{ steps.bump-version.outputs.commit_sha }}
 
       - name: Fetch new tag
-        if : steps.check-branch.outputs.isMaster == 'true'
+        if: steps.check-branch.outputs.isMaster == 'true'
         run: |
           git fetch
 
       - name: Build Changelog
-        if : steps.check-branch.outputs.isMaster == 'true'
+        if: steps.check-branch.outputs.isMaster == 'true'
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v3
         env:
@@ -105,13 +109,11 @@ jobs:
           configuration: ".github/releasenotes-config.json"
 
       - name: Add changelog to release
-        if : steps.check-branch.outputs.isMaster == 'true'
+        if: steps.check-branch.outputs.isMaster == 'true'
         uses: softprops/action-gh-release@v1
         with:
           body: ${{ steps.changelog.outputs.changelog }}
           tag_name: ${{ steps.bump-version.outputs.package_version }}
-
-          #--Tag
 
       - name: Gradle Cache
         uses: actions/cache@v2
@@ -149,12 +151,11 @@ jobs:
           path: ${{ steps.sign-app.outputs.signedReleaseFile }}
 
       - name: Upload bundle to release
-        if : steps.check-branch.outputs.isMaster == 'false'
+        if: steps.check-branch.outputs.isMaster == 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.bump-version.outputs.package_version }}
           files: ${{ steps.sign-app.outputs.signedReleaseFile }}
-          prerelease: true
 
       - name: Extract APK from bundle
         id: extract-apk
@@ -177,10 +178,10 @@ jobs:
           rm -f bundletool-all-1.8.2.jar
 
           APK_DIRECTORY=android/app/build/outputs/apk/release
-          if [ steps.check-branch.outputs.isMaster == 'true' ] then ;
-          APK_FILE_NAME=com.takeoff.mobileapp-v${{ steps.bump-version.outputs.package_version }}.apk
-          else
-          APK_FILE_NAME=com.takeoff.mobileapp-v${{ github.ref_NAME }}.apk
+          if [ steps.check-branch.outputs.isMaster == 'true' ]; then
+            APK_FILE_NAME=com.takeoff.mobileapp-v${{ steps.bump-version.outputs.package_version }}.apk
+          else 
+            APK_FILE_NAME=com.takeoff.mobileapp-"$(echo ${{github.ref_name}} | cut -d "/" -f2)".apk
           fi
           APK_FILE_PATH=$APK_DIRECTORY/$APK_FILE_NAME
 
@@ -199,13 +200,21 @@ jobs:
           name: Signed APK
           path: ${{ steps.extract-apk.outputs.apk_file }}
 
+      - name: Upload APK to pre-release
+        if: steps.check-branch.outputs.isMaster == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          body: All APKs created on non-master branches
+          tag_name: dev-apks
+          files: ${{ steps.extract-apk.outputs.apk_file }}
+          prerelease: true
+
       - name: Upload APK to release
-        if : steps.check-branch.outputs.isMaster == 'false'
+        if: steps.check-branch.outputs.isMaster == 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.bump-version.outputs.package_version }}
           files: ${{ steps.extract-apk.outputs.apk_file }}
-          prerelease: true
 
       # Disabling until the test env is fixed in https://takeofftech.atlassian.net/browse/UI-473
       # - name: Run E2E Tests
